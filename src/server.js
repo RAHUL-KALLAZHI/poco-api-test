@@ -201,7 +201,7 @@ async function makeCall(request, response) {
   var to = null;
   var conferenceId = null;
   var from = null;
-  console.log(request);
+  console.log("request makeCall =>", request);
   if (request.method == "POST") {
     to = request.body.to;
     conferenceId = request.body.conferenceId;
@@ -219,29 +219,31 @@ async function makeCall(request, response) {
     );
   } else if (isNumber(to)) {
     from = request.body.from;
-    client.calls.create(
-      {
-        statusCallback: `${serverUrl}/events?conferenceId=${conferenceId}`,
-        statusCallbackEvent: [
-          "initiated",
-          "answered",
-          "ringing",
-          "completed",
-          "cancel",
-          "transportClose",
-          "reject",
-        ],
-        statusCallbackMethod: "POST",
-        url: `${serverUrl}/dial?conferenceId=${conferenceId}&to=${to}&callerId=${from}`, // TODO: end point for /dial
-        to: to,
-        from: from, // TODO: replace with twilio purchased no
-        method: "GET",
-      },
-      function (err, call) {
-        if (err) console.log(err.message);
-        else console.log(call);
-      }
-    );
+    client.calls
+      .create(
+        {
+          statusCallback: `${serverUrl}/events?conferenceId=${conferenceId}`,
+          statusCallbackEvent: [
+            "initiated",
+            "answered",
+            "ringing",
+            "completed",
+            "cancel",
+            "transportClose",
+            "reject",
+          ],
+          statusCallbackMethod: "POST",
+          url: `${serverUrl}/dial?conferenceId=${conferenceId}&to=${to}&callerId=${from}`, // TODO: end point for /dial
+          to: to,
+          from: from, // TODO: replace with twilio purchased no
+          method: "GET",
+        },
+        function (err, call) {
+          if (err) console.log(err.message);
+          else console.log(call);
+        }
+      )
+      .then((e) => console.log("else if (isNumber(to))", e));
   } else {
     if (request.method == "POST") {
       from = request.body.from;
@@ -252,29 +254,31 @@ async function makeCall(request, response) {
     if (!from) {
       from = callerId;
     }
-    client.calls.create(
-      {
-        statusCallback: `${serverUrl}/events?conferenceId=${conferenceId}`,
-        statusCallbackEvent: [
-          "initiated",
-          "answered",
-          "ringing",
-          "completed",
-          "cancel",
-          "transportClose",
-          "reject",
-        ],
-        statusCallbackMethod: "POST",
-        url: `${serverUrl}/dial?conferenceId=${conferenceId}&callerId=${from}&to=${to}`, // TODO: end point for /dial
-        to: to,
-        from: from, // TODO: replace with twilio purchased no
-        method: "GET",
-      },
-      function (err, call) {
-        if (err) console.log(err.message);
-        else console.log(call);
-      }
-    );
+    client.calls
+      .create(
+        {
+          statusCallback: `${serverUrl}/events?conferenceId=${conferenceId}`,
+          statusCallbackEvent: [
+            "initiated",
+            "answered",
+            "ringing",
+            "completed",
+            "cancel",
+            "transportClose",
+            "reject",
+          ],
+          statusCallbackMethod: "POST",
+          url: `${serverUrl}/dial?conferenceId=${conferenceId}&callerId=${from}&to=${to}`, // TODO: end point for /dial
+          to: to,
+          from: from, // TODO: replace with twilio purchased no
+          method: "GET",
+        },
+        function (err, call) {
+          if (err) console.log("makeCall =>", err.message);
+          else console.log(call);
+        }
+      )
+      .then((e) => console.log("else ", e));
   }
   const dial = voiceResponse.dial({ callerId: from, answerOnBridge: true });
   dial.conference(conferenceId, {
