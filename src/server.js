@@ -497,7 +497,7 @@ async function verify(request, response) {
 
 function dialResponse(request, response) {
   let twiml = new VoiceResponse();
-  console.log(request);
+  console.log("dialResponse request=>", request, response);
   const conferenceId = request.query.conferenceId;
   const caller = request.query.callerId;
   const to = request.query.to;
