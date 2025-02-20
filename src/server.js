@@ -385,7 +385,7 @@ function incoming() {
 
 function welcome() {
   const voiceResponse = new VoiceResponse();
-  voiceResponse.say("Welcome to Twilio");
+  voiceResponse.say("Welcome to Twilio, vinoy Have a nice day");
   console.log("Response welcome:" + voiceResponse.toString());
   return voiceResponse.toString();
 }
