@@ -192,7 +192,8 @@ async function voice(request, response) {
 
   // Render the response as XML in reply to the webhook request
   response.type("text/xml");
-  console.log("Response:" + twiml.toString());
+  response.say("Hai Rahul");
+  console.log("Response dial:" + twiml.toString());
   return response.send(twiml.toString());
 }
 
@@ -379,14 +380,14 @@ function incoming() {
   voiceResponse.say(
     "Congratulations! You have received your first inbound call! Good bye."
   );
-  console.log("Response:" + voiceResponse.toString());
+  console.log("Response incoming:" + voiceResponse.toString());
   return voiceResponse.toString();
 }
 
 function welcome() {
   const voiceResponse = new VoiceResponse();
   voiceResponse.say("Welcome to Twilio");
-  console.log("Response:" + voiceResponse.toString());
+  console.log("Response welcome:" + voiceResponse.toString());
   return voiceResponse.toString();
 }
 
