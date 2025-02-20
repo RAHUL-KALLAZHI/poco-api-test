@@ -219,6 +219,7 @@ async function makeCall(request, response) {
     );
   } else if (isNumber(to)) {
     from = request.body.from;
+    console.log("makeCall isNumber(to) =>", serverUrl, conferenceId, to, from);
     client.calls
       .create(
         {
@@ -254,6 +255,7 @@ async function makeCall(request, response) {
     if (!from) {
       from = callerId;
     }
+    console.log("makeCall isNumber(to) =>", serverUrl, conferenceId, to, from);
     client.calls
       .create(
         {
