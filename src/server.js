@@ -192,7 +192,6 @@ async function voice(request, response) {
 
   // Render the response as XML in reply to the webhook request
   response.type("text/xml");
-  response.say("Hai Rahul");
   console.log("Response dial:" + twiml.toString());
   return response.send(twiml.toString());
 }
