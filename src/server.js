@@ -621,39 +621,87 @@ async function addParticipant(request, response) {
 }
 
 async function leaveConference(request, response) {
-  const accountSid = process.env.ACCOUNT_SID;
-  const authToken = process.env.AUTH_TOKEN;
-  const caller = request.query.callerId;
-  const to = request.query.to;
-  console.log(request.body);
-  const conferenceSid = request.body.ConferenceSid;
-  const client = require("twilio")(accountSid, authToken);
-  const participants = await client
-    .conferences(conferenceSid)
-    .participants.list();
-  console.log(participants);
-  if ((request.body.StatusCallbackEven = "participant-leave")) {
-    console.log("no more participant");
-    if (participants.length == 1) {
-      console.log("no participants");
-      client.conferences(conferenceSid).update({ status: "completed" });
-    } else if (participants.length == 0) {
-      call = await client.calls.list({ to: to, from: caller, limit: 1 });
-      console.log("no more calls");
-      console.log(call, "list");
-      const callSid = call[0].sid;
-      client.calls(callSid).update({ status: "completed" });
-      console.log(callSid, "call ended");
-    } else {
-      call = await client.calls.list({ to: to, from: caller, limit: 1 });
-      console.log("two or more participants left");
-      console.log("list of availabel participant");
-      console.log(call);
-      const callSid = call[0].sid;
+  try {
+    const accountSid = process.env.ACCOUNT_SID;
+    const authToken = process.env.AUTH_TOKEN;
+    const caller = request.query.callerId;
+    const to = request.query.to;
+    const conferenceSid = request.body.ConferenceSid;
+
+    const client = require("twilio")(accountSid, authToken);
+    const participants = await client
+      .conferences(conferenceSid)
+      .participants.list();
+
+    console.log("Participants in conference:", participants);
+
+    if (request.body.StatusCallbackEvent === "participant-leave") {
+      console.log("Participant left the conference.");
+
+      if (participants.length === 1) {
+        console.log("Only one participant remaining. Ending conference.");
+        await client.conferences(conferenceSid).update({ status: "completed" });
+      } else if (participants.length === 0) {
+        console.log("No participants remaining. Ending related call.");
+        const call = await client.calls.list({
+          to: to,
+          from: caller,
+          limit: 1,
+        });
+        if (call.length > 0) {
+          const callSid = call[0].sid;
+          await client.calls(callSid).update({ status: "completed" });
+          console.log(callSid, "call ended successfully.");
+        } else {
+          console.log("No active call found.");
+        }
+      } else {
+        console.log("Multiple participants still in the conference.");
+      }
     }
+    response
+      .status(200)
+      .send({ message: "Conference leave handled successfully." });
+  } catch (error) {
+    console.error("Error in leaveConference:", error);
+    response.status(500).send({ error: "Failed to handle conference leave." });
   }
-  return;
 }
+
+// async function leaveConference(request, response) {
+//   const accountSid = process.env.ACCOUNT_SID;
+//   const authToken = process.env.AUTH_TOKEN;
+//   const caller = request.query.callerId;
+//   const to = request.query.to;
+//   console.log(request.body);
+//   const conferenceSid = request.body.ConferenceSid;
+//   const client = require("twilio")(accountSid, authToken);
+//   const participants = await client
+//     .conferences(conferenceSid)
+//     .participants.list();
+//   console.log(participants);
+//   if ((request.body.StatusCallbackEven = "participant-leave")) {
+//     console.log("no more participant");
+//     if (participants.length == 1) {
+//       console.log("no participants");
+//       client.conferences(conferenceSid).update({ status: "completed" });
+//     } else if (participants.length == 0) {
+//       call = await client.calls.list({ to: to, from: caller, limit: 1 });
+//       console.log("no more calls");
+//       console.log(call, "list");
+//       const callSid = call[0].sid;
+//       client.calls(callSid).update({ status: "completed" });
+//       console.log(callSid, "call ended");
+//     } else {
+//       call = await client.calls.list({ to: to, from: caller, limit: 1 });
+//       console.log("two or more participants left");
+//       console.log("list of availabel participant");
+//       console.log(call);
+//       const callSid = call[0].sid;
+//     }
+//   }
+//   return;
+// }
 
 async function muteConference(request, response) {
   var conferenceSid = null;
