@@ -7,7 +7,7 @@ const defaultIdentity = "alice";
 const callerId = "+916282649883";
 const MODERATOR = "+18149134172";
 // Use a valid Twilio number by adding to your account via https://www.twilio.com/console/phone-numbers/verified
-const callerNumber = "+919446628537";
+const callerNumber = "+916282649883";
 const serverUrl = "https://poco-api-test.onrender.com";
 
 const accountSid = process.env.ACCOUNT_SID;
@@ -234,10 +234,9 @@ async function makeCall(request, response) {
             "reject",
           ],
           statusCallbackMethod: "POST",
-          twiml: `<Response><Dial callerId="${callerNumber}">${to}</Dial></Response>`,
           url: `${serverUrl}/dial?conferenceId=${conferenceId}&to=${to}&callerId=${from}`, // TODO: end point for /dial
           to: to,
-          from: "+18624659513", // TODO: replace with twilio purchased no
+          from: from, // TODO: replace with twilio purchased no
           method: "GET",
         },
         function (err, call) {
